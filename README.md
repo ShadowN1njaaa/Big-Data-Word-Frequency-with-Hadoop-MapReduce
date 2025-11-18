@@ -44,25 +44,28 @@ tfidf(t,d) = tf(t,d) × idf(t)
 
 ---
 
-## Project Structure
+## Project Layout
 
 ```
-code/
-├── pom.xml                                    # Maven build configuration
-├── src/main/java/sn1/assignment1_bigdata/
-│   ├── Driver.java                            # Pipeline orchestrator
-│   ├── Tokenizer.java                         # Text tokenization utility
-│   ├── Job1_TermCount.java                   # Step 1: Count terms per document
-│   ├── Job2_TF.java                          # Step 2: Compute TF scores
-│   ├── Job3_IDF.java                         # Step 3: Compute IDF scores
-│   ├── Job4_TFIDF.java                       # Step 4: Compute TF-IDF scores
-│   ├── Job5_TopNTFIDF.java                   # Step 5: Extract top-N terms
-│   └── Job5_TopNByFrequency.java             # (Placeholder for future work)
-└── target/
-    └── assignment1-bigdata-1.0-SNAPSHOT.jar  # Compiled JAR
+Assignment1_BigData/
+├── code/
+│   ├── pom.xml
+│   ├── src/main/java/sn1/assignment1_bigdata/
+│   │   ├── Driver.java
+│   │   ├── Tokenizer.java
+│   │   ├── Job1_TermCount.java
+│   │   ├── Job2_TF.java
+│   │   ├── Job3_IDF.java
+│   │   ├── Job4_TFIDF.java
+│   │   ├── Job5_TopNTFIDF.java
+│   │   
+│   └── target/
+│       └── assignment1-bigdata-1.0-SNAPSHOT.jar
+└── inputs/
+    ├── input1.txt                    # Sample document 1
+    ├── input2.txt                    # Sample document 2
+    └── input3.txt                    # Sample document 3
 ```
-
----
 
 ## Environment Setup
 
@@ -89,6 +92,46 @@ mvn clean package
 This produces: `target/assignment1-bigdata-1.0-SNAPSHOT.jar`
 
 The JAR manifest specifies `sn1.assignment1_bigdata.Driver` as the main class, so you don't need to specify it when running.
+
+---
+
+## Preparing Input Data
+
+### Upload Sample Data to HDFS
+
+The project includes sample documents in the `inputs/` folder. Upload them to HDFS:
+
+```bash
+# Create HDFS input directory
+hadoop fs -mkdir -p /user/$(whoami)/tfidf_input
+
+# Upload sample documents
+hadoop fs -put inputs/* /user/$(whoami)/tfidf_input/
+
+# Verify upload
+hadoop fs -ls /user/$(whoami)/tfidf_input
+```
+
+Expected output:
+```
+Found 3 items
+-rw-r--r--   1 user supergroup   ... /user/user/tfidf_input/input1.txt
+-rw-r--r--   1 user supergroup   ... /user/user/tfidf_input/input2.txt
+-rw-r--r--   1 user supergroup   ... /user/user/tfidf_input/input3.txt
+```
+
+### Using Custom Input Files
+
+To use your own documents:
+```bash
+# Upload from local directory
+hadoop fs -put /path/to/your/documents/* /user/$(whoami)/tfidf_input/
+
+# Or upload individual files
+hadoop fs -put mydoc.txt /user/$(whoami)/tfidf_input/
+```
+
+**Note**: Each file in the input directory is treated as a separate document. The filename becomes the document ID used in output.
 
 ---
 
@@ -375,8 +418,6 @@ Check Driver console output for: `Detected number of documents: N`
 hadoop fs -cat <output>/step5_topn_tfidf/part-r-00000 | \
   awk '{print $1}' | uniq -c
 ```
-
----
 
 ## Academic Context
 
