@@ -435,9 +435,3 @@ This implementation demonstrates key MapReduce patterns:
 Academic use for Big Data coursework. Adapt as needed for educational purposes.
 
 ---
-
-## Contact
-
-Project: `sn1.assignment1_bigdata`  
-Package: `sn1.assignment1_bigdata`  
-Main Class: `sn1.assignment1_bigdata.Driver`
